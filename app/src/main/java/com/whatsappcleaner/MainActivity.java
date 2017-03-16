@@ -193,11 +193,11 @@ public class MainActivity extends AppCompatActivity {
                 float size = utilities.getSize();
                 if(size == -1){
                     textView.setText("No additional Backups Created.");
-                    textView.setTextColor(Color.GREEN);
+                    textView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                     fab.hide();
                 }else{
                     textView.setText("You can clear upto " + size/(1024*1024) + " MB.");
-                    textView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                    textView.setTextColor(Color.RED);
                     fab.show();
                 }
             }
