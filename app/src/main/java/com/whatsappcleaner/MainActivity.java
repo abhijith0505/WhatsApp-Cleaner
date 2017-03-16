@@ -1,7 +1,13 @@
 package com.whatsappcleaner;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,16 +19,22 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
+    TextView textView;
+    FloatingActionButton fab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
 
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -30,7 +42,18 @@ public class MainActivity extends AppCompatActivity {
                     checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                             == PackageManager.PERMISSION_GRANTED) {
                 Log.v("","Permission is granted");
-                Toast.makeText(MainActivity.this, "Permission granted", Toast.LENGTH_SHORT).show();
+                textView = (TextView) findViewById(R.id.textView1);
+                Utilities utilities = new Utilities(MainActivity.this);
+                float size = utilities.getSize();
+                if(size == -1){
+                    textView.setText("No additional Backups Created.");
+                    textView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                    fab.hide();
+                }else{
+                    textView.setText("You can clear upto " + size/(1024*1024) + " MB.");
+                    textView.setTextColor(Color.RED);
+                    fab.show();
+                }
             } else {
                 Log.v("","Permission is revoked");
                 ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -39,25 +62,57 @@ public class MainActivity extends AppCompatActivity {
         }
         else { //permission is automatically granted on sdk<23 upon installation
             Log.v("","Permission is granted");
-            Toast.makeText(MainActivity.this, "Permission granted", Toast.LENGTH_SHORT).show();
+            textView = (TextView) findViewById(R.id.textView1);
+            Utilities utilities = new Utilities(MainActivity.this);
+            float size = utilities.getSize();
+            if(size == -1){
+                textView.setText("No additional Backups Created.");
+                textView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                fab.hide();
+            }else{
+                textView.setText("You can clear upto " + size/(1024*1024) + " MB.");
+                textView.setTextColor(Color.RED);
+                fab.show();
+            }
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                Utilities utilities = new Utilities(MainActivity.this);
-                int res = utilities.delete();
+                LongDeleteOperation longDeleteOperation = new LongDeleteOperation(MainActivity.this);
+                longDeleteOperation.execute();
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
             }
         });
+    }
+
+    public void launchTestService() {
+        // Construct our Intent specifying the Service
+        Intent i = new Intent(this, PeriodicService.class);
+        startService(i);
+        Calendar cal = Calendar.getInstance();
+        Intent intent = new Intent(this, PeriodicService.class);
+        PendingIntent pintent = PendingIntent
+                .getService(this, 0, intent, 0);
+
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarm.cancel(pintent);
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
+                8* 1000, pintent);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+       /* SharedPreferences settings = getSharedPreferences("whatscrap_settings", 0);
+        boolean isChecked = settings.getBoolean("daily_checkbox", false);
+        MenuItem item = menu.findItem(R.id.action_check);
+        item.setChecked(isChecked);*/
         return true;
     }
 
@@ -69,9 +124,30 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_share) {
+            final String appPackageName = getPackageName();
+            final String promoText = "Hey! I'm using this app! Check it out! \n\n";
+
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, promoText + "http://play.google.com/store/apps/details?id=" + appPackageName);
+            sendIntent.setType("text/plain");
+            startActivity(sendIntent);
             return true;
         }
+       /* else if (id == R.id.action_check) {
+            item.setChecked(!item.isChecked());
+            SharedPreferences settings = getSharedPreferences("whatscrap_settings", 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean("daily_checkbox", item.isChecked());
+            editor.commit();
+            if(item.isChecked()){
+                launchTestService();
+            }else{
+                stopService(new Intent(getBaseContext(), PeriodicService.class));
+            }
+            return true;
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -83,6 +159,18 @@ public class MainActivity extends AppCompatActivity {
             if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
                 Log.v("","Permission: "+permissions[0]+ "was "+grantResults[0]);
                 Toast.makeText(MainActivity.this, "Permission granted", Toast.LENGTH_SHORT).show();
+                textView = (TextView) findViewById(R.id.textView1);
+                Utilities utilities = new Utilities(MainActivity.this);
+                float size = utilities.getSize();
+                if(size == -1){
+                    textView.setText("No additional Backups Created.");
+                    textView.setTextColor(Color.GREEN);
+                    fab.hide();
+                }else{
+                    textView.setText("You can clear upto " + size/(1024*1024) + " MB.");
+                    textView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                    fab.show();
+                }
             }
             else{
                 Toast.makeText(MainActivity.this, "Permission not granted", Toast.LENGTH_SHORT).show();

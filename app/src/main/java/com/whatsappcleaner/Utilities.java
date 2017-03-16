@@ -23,6 +23,7 @@ public class Utilities {
         mContext = context;
     }
 
+
     int delete(){
         int success=0;
 
@@ -47,6 +48,26 @@ public class Utilities {
         }
 
         return success;
+    }
+
+    float getSize(){
+        float size = -1;
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+
+        Arrays.sort(files, new Comparator<File>(){
+            public int compare(File f1, File f2)
+            {
+                return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+            } });
+
+        if(files.length > 1){
+            Log.d("Files", "Size: "+ files.length);
+            for (int i = 1; i < files.length; i++)
+            {   size += files[i].length();
+            }
+        }
+        return size;
     }
 
 }
