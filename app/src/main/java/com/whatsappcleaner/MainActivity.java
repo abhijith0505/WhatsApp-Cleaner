@@ -22,7 +22,14 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 import java.util.Calendar;
+
+import hotchemi.android.rate.AppRate;
+import hotchemi.android.rate.OnClickButtonListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -76,7 +83,29 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        MobileAds.initialize(getApplicationContext(), getResources().getString(R.string.banner_app_id));
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
+        AppRate.with(this)
+                .setInstallDays(1) // default 10, 0 means install day.
+                .setLaunchTimes(2) // default 10
+                .setRemindInterval(1) // default 1
+                .setShowLaterButton(true) // default true
+                .setDebug(false) // default false
+                .setOnClickButtonListener(new OnClickButtonListener() { // callback listener.
+                    @Override
+                    public void onClickButton(int which) {
+                        Log.d(MainActivity.class.getName(), Integer.toString(which));
+                    }
+                })
+                .monitor();
+
+        // Show a dialog if meets conditions
+        AppRate.showRateDialogIfMeetsConditions(this);
+
+        AppRate.with(this).clearAgreeShowDialog();
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -2,4 +2,6 @@
     <string name="app_name">WhatsCrap</string>
     <string name="action_settings">Settings</string>
     <string name="action_check">Delele Every Day</string>
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="banner_app_id">ca-app-pub-3940256099942544~3347511713</string>
 </resources>
