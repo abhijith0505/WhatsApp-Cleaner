@@ -9,7 +9,7 @@ import android.widget.Toast;
  * Created by Abhijith on 12-02-2017.
  */
 
-public class LongDeleteOperation extends AsyncTask<Void, Integer, String> {
+public class LongDeleteOperation extends AsyncTask<Boolean, Integer, String> {
 
     Utilities utilities;
     ProgressDialog mProgressDialog;
@@ -34,8 +34,8 @@ public class LongDeleteOperation extends AsyncTask<Void, Integer, String> {
     }
 
     @Override
-    protected String doInBackground(Void... voids) {
-        utilities.delete();
+    protected String doInBackground(Boolean... all) {
+        utilities.delete(all[0]);
         return null;
     }
 

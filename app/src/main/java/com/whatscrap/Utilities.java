@@ -24,8 +24,12 @@ public class Utilities {
     }
 
 
-    int delete(){
+    int delete(boolean all){
         int success=0;
+
+        int initial;
+        if(all) initial = 0;
+        else initial = 1;
 
         File directory = new File(path);
         File[] files = directory.listFiles();
@@ -38,7 +42,7 @@ public class Utilities {
 
         if(files.length > 1){
             Log.d("Files", "Size: "+ files.length);
-            for (int i = 1; i < files.length; i++)
+            for (int i = initial; i < files.length; i++)
             {   boolean deleted = files[i].delete();
                 Log.d("Files", "FileName:" + files[i].getName());
             }

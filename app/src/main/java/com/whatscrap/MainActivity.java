@@ -114,14 +114,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
                 builder1.setMessage("Confirm Deletion");
-                builder1.setCancelable(true);
+                builder1.setCancelable(false);
 
                 builder1.setPositiveButton(
                         "Yes",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 LongDeleteOperation longDeleteOperation = new LongDeleteOperation(MainActivity.this);
-                                longDeleteOperation.execute();
+                                longDeleteOperation.execute(false);
                                 Intent intent = getIntent();
                                 finish();
                                 startActivity(intent);
@@ -187,6 +187,34 @@ public class MainActivity extends AppCompatActivity {
             sendIntent.setType("text/plain");
             startActivity(sendIntent);
             return true;
+        } else if(id == R.id.action_clear_all){
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+            builder1.setMessage("Delete All?");
+            builder1.setCancelable(false);
+
+            builder1.setPositiveButton(
+                    "Yes",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            LongDeleteOperation longDeleteOperation = new LongDeleteOperation(MainActivity.this);
+                            longDeleteOperation.execute(true);
+                            Intent intent = getIntent();
+                            finish();
+                            startActivity(intent);
+                            dialog.cancel();
+                        }
+                    });
+
+            builder1.setNegativeButton(
+                    "No",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
         }
        /* else if (id == R.id.action_check) {
             item.setChecked(!item.isChecked());
