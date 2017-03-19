@@ -1,4 +1,4 @@
-package com.whatsappcleaner;
+package com.whatscrap;
 
 import org.junit.Test;
 

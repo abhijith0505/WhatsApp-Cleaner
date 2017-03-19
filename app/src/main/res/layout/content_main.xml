@@ -12,12 +12,12 @@
     android:weightSum="10"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.whatsappcleaner.MainActivity"
+    tools:context="com.whatscrap.MainActivity"
     tools:showIn="@layout/activity_main"
     android:gravity="center">
 
     <TextView
-        android:text="WhatsApp backups fill our phone storage"
+        android:text="WhatsApp backups fills our phone storage"
         android:layout_marginBottom="6dp"
         android:textStyle="bold"
         android:textSize="25sp"
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/textView3" />
     <TextView
-        android:text="WhatsCrap deletes all but the latest one! \n Who knows, you might still need it!"
+        android:text="WhatsCrap deletes all of them, except the latest one! \n Who knows, you might still need it!"
         android:layout_width="wrap_content"
         android:layout_marginBottom="6dp"
         android:textAlignment="center"
@@ -55,7 +55,7 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id">
+        ads:adUnitId="@string/ad_unit_id">
     </com.google.android.gms.ads.AdView>
 
 

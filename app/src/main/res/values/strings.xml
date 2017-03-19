@@ -4,4 +4,11 @@
     <string name="action_check">Delele Every Day</string>
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
     <string name="banner_app_id">ca-app-pub-3940256099942544~3347511713</string>
+    <!--
+
+        Prod banner cred
+
+    -->
+    <string name="ad_unit_id">ca-app-pub-4188872795654365/4469584132</string>
+    <string name="app_id">ca-app-pub-4188872795654365~4888386537</string>
 </resources>

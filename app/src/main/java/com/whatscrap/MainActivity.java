@@ -1,18 +1,18 @@
-package com.whatsappcleaner;
+package com.whatscrap;
 
 import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        MobileAds.initialize(getApplicationContext(), getResources().getString(R.string.banner_app_id));
+        MobileAds.initialize(getApplicationContext(), getResources().getString(R.string.app_id));
         AdView mAdView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
@@ -110,11 +110,33 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LongDeleteOperation longDeleteOperation = new LongDeleteOperation(MainActivity.this);
-                longDeleteOperation.execute();
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+                builder1.setMessage("Confirm Deletion");
+                builder1.setCancelable(true);
+
+                builder1.setPositiveButton(
+                        "Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                LongDeleteOperation longDeleteOperation = new LongDeleteOperation(MainActivity.this);
+                                longDeleteOperation.execute();
+                                Intent intent = getIntent();
+                                finish();
+                                startActivity(intent);
+                                dialog.cancel();
+                            }
+                        });
+
+                builder1.setNegativeButton(
+                        "No",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+                AlertDialog alert11 = builder1.create();
+                alert11.show();
             }
         });
     }

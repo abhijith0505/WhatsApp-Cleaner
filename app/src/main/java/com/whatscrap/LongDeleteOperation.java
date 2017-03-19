@@ -1,15 +1,9 @@
-package com.whatsappcleaner;
+package com.whatscrap;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.util.SparseBooleanArray;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
 
 /**
  * Created by Abhijith on 12-02-2017.
