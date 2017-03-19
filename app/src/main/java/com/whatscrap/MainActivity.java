@@ -57,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
                     textView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                     fab.hide();
                 }else{
-                    textView.setText("You can clear upto " + size/(1024*1024) + " MB.");
+                    int files = utilities.getNumberOfFiles();
+                    textView.setText(files + " old backups found. \n You can clear upto " + size/(1024*1024) + " MB.");
                     textView.setTextColor(Color.RED);
                     fab.show();
                 }
@@ -77,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
                 textView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                 fab.hide();
             }else{
-                textView.setText("You can clear upto " + size/(1024*1024) + " MB.");
+                int files = utilities.getNumberOfFiles();
+                textView.setText(files + " old backups found. \n You can clear upto " + size/(1024*1024) + " MB.");
                 textView.setTextColor(Color.RED);
                 fab.show();
             }
@@ -218,7 +220,8 @@ public class MainActivity extends AppCompatActivity {
                     textView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                     fab.hide();
                 }else{
-                    textView.setText("You can clear upto " + size/(1024*1024) + " MB.");
+                    int files = utilities.getNumberOfFiles();
+                    textView.setText(files + " old backups found. \n You can clear upto " + size/(1024*1024) + " MB.");
                     textView.setTextColor(Color.RED);
                     fab.show();
                 }

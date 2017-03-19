@@ -55,8 +55,6 @@ public class Utilities {
         File directory = new File(path);
         File[] files = directory.listFiles();
 
-
-
         if(files.length > 1){
             Arrays.sort(files, new Comparator<File>(){
                 public int compare(File f1, File f2)
@@ -69,6 +67,12 @@ public class Utilities {
             }
         }
         return size;
+    }
+
+    int getNumberOfFiles(){
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+        return files.length - 1;
     }
 
 }
