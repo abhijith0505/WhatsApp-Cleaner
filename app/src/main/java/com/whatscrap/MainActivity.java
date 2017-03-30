@@ -107,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
         // Show a dialog if meets conditions
         AppRate.showRateDialogIfMeetsConditions(this);
 
-        AppRate.with(this).clearAgreeShowDialog();
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
