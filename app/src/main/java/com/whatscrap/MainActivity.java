@@ -10,7 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -40,8 +41,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.black));
         setSupportActionBar(toolbar);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        //Floating action menu
+        final FloatingActionsMenu leftlabels = (FloatingActionsMenu) findViewById(R.id.right_labels);
+        leftlabels.bringToFront();
 
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -55,12 +59,12 @@ public class MainActivity extends AppCompatActivity {
                 if(size == -1){
                     textView.setText("No additional Backups Created.");
                     textView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                    fab.hide();
+                    //fab.hide();
                 }else{
                     int files = utilities.getNumberOfFiles();
                     textView.setText(files + " old backups found. \n You can clear upto " + size/(1024*1024) + " MB.");
                     textView.setTextColor(Color.RED);
-                    fab.show();
+                    //fab.show();
                 }
             } else {
                 Log.v("","Permission is revoked");
@@ -76,12 +80,12 @@ public class MainActivity extends AppCompatActivity {
             if(size == -1){
                 textView.setText("No additional Backups Created.");
                 textView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                fab.hide();
+
             }else{
                 int files = utilities.getNumberOfFiles();
                 textView.setText(files + " old backups found. \n You can clear upto " + size/(1024*1024) + " MB.");
                 textView.setTextColor(Color.RED);
-                fab.show();
+                //fab.show();
             }
         }
 
@@ -107,39 +111,106 @@ public class MainActivity extends AppCompatActivity {
         // Show a dialog if meets conditions
         AppRate.showRateDialogIfMeetsConditions(this);
 
-
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton all = new FloatingActionButton(this);
+        all.bringToFront();
+        all.setTitle("Clear all");
+        all.setColorNormal(android.R.color.white);
+        all.setColorNormalResId(R.color.colorAccent);
+        all.setIcon(R.mipmap.ic_delete_sweep_black_24dp);
+        all.setSize(FloatingActionButton.SIZE_NORMAL);
+        leftlabels.addButton(all);
+        all.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
-                builder1.setMessage("Confirm Deletion");
-                builder1.setCancelable(false);
+            public void onClick(View v) {
+                leftlabels.collapse();
+                Utilities utilities = new Utilities(MainActivity.this);
+                float num = utilities.getNumberOfFiles();
+                if(num == 0){
+                    Toast.makeText(MainActivity.this, "No Backups found", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+                    builder1.setMessage("Delete All?");
+                    builder1.setCancelable(false);
 
-                builder1.setPositiveButton(
-                        "Yes",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                LongDeleteOperation longDeleteOperation = new LongDeleteOperation(MainActivity.this);
-                                longDeleteOperation.execute(false);
-                                Intent intent = getIntent();
-                                finish();
-                                startActivity(intent);
-                                dialog.cancel();
-                            }
-                        });
+                    builder1.setPositiveButton(
+                            "Yes",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    LongDeleteOperation longDeleteOperation = new LongDeleteOperation(MainActivity.this);
+                                    longDeleteOperation.execute(true);
+                                    Intent intent = getIntent();
+                                    finish();
+                                    startActivity(intent);
+                                    dialog.cancel();
+                                }
+                            });
 
-                builder1.setNegativeButton(
-                        "No",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
+                    builder1.setNegativeButton(
+                            "No",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
 
-                AlertDialog alert11 = builder1.create();
-                alert11.show();
+                    AlertDialog alert11 = builder1.create();
+                    alert11.show();
+                }
             }
         });
+
+        FloatingActionButton old = new FloatingActionButton(this);
+        old.bringToFront();
+        old.setTitle("Clear old");
+        old.setIcon(R.mipmap.ic_delete_black_24dp);
+        old.setColorNormalResId(R.color.colorAccent);
+        old.setSize(FloatingActionButton.SIZE_NORMAL);
+        leftlabels.addButton(old);
+        old.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                leftlabels.collapse();
+                Utilities utilities = new Utilities(MainActivity.this);
+                float num = utilities.getNumberOfFiles();
+                if(num <= 1){
+                    Toast.makeText(MainActivity.this, "No Old Backups found", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+                    builder1.setMessage("Confirm Deletion");
+                    builder1.setCancelable(false);
+
+                    builder1.setPositiveButton(
+                            "Yes",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    LongDeleteOperation longDeleteOperation = new LongDeleteOperation(MainActivity.this);
+                                    longDeleteOperation.execute(false);
+                                    Intent intent = getIntent();
+                                    finish();
+                                    startActivity(intent);
+                                    dialog.cancel();
+                                }
+                            });
+
+                    builder1.setNegativeButton(
+                            "No",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+
+                    AlertDialog alert11 = builder1.create();
+                    alert11.show();
+                }
+            }
+        });
+
+
+
+
     }
 
     public void launchTestService() {
@@ -186,34 +257,6 @@ public class MainActivity extends AppCompatActivity {
             sendIntent.setType("text/plain");
             startActivity(sendIntent);
             return true;
-        } else if(id == R.id.action_clear_all){
-            AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
-            builder1.setMessage("Delete All?");
-            builder1.setCancelable(false);
-
-            builder1.setPositiveButton(
-                    "Yes",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            LongDeleteOperation longDeleteOperation = new LongDeleteOperation(MainActivity.this);
-                            longDeleteOperation.execute(true);
-                            Intent intent = getIntent();
-                            finish();
-                            startActivity(intent);
-                            dialog.cancel();
-                        }
-                    });
-
-            builder1.setNegativeButton(
-                    "No",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
-
-            AlertDialog alert11 = builder1.create();
-            alert11.show();
         }
        /* else if (id == R.id.action_check) {
             item.setChecked(!item.isChecked());
@@ -245,12 +288,10 @@ public class MainActivity extends AppCompatActivity {
                 if(size == -1){
                     textView.setText("No additional Backups Created.");
                     textView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                    fab.hide();
                 }else{
                     int files = utilities.getNumberOfFiles();
                     textView.setText(files + " old backups found. \n You can clear upto " + size/(1024*1024) + " MB.");
                     textView.setTextColor(Color.RED);
-                    fab.show();
                 }
             }
             else{

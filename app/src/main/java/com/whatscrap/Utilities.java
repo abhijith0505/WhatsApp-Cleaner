@@ -40,15 +40,12 @@ public class Utilities {
                 return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
             } });
 
-        if(files.length > 1){
+        if(files.length > 0){
             Log.d("Files", "Size: "+ files.length);
             for (int i = initial; i < files.length; i++)
             {   boolean deleted = files[i].delete();
                 Log.d("Files", "FileName:" + files[i].getName());
             }
-        }
-        else{
-            Toast.makeText(mContext, "You do not have unwanted chat backups", Toast.LENGTH_SHORT).show();
         }
 
         return success;
@@ -76,7 +73,8 @@ public class Utilities {
     int getNumberOfFiles(){
         File directory = new File(path);
         File[] files = directory.listFiles();
-        return files.length - 1;
+        Log.d("number of files", files.length + "");
+        return files.length;
     }
 
 }
